@@ -6,7 +6,7 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 smile_cascade = cv2.CascadeClassifier('haarcascade_smile.xml') 
 
 cap = cv2.VideoCapture(0) 
-#ser = serial.Serial("COM3", 9600, timeout=1)
+ser = serial.Serial("COM3", 9600, timeout=1)
 tess = tesseract()
 
 
@@ -18,11 +18,13 @@ def detect(gray, frame):
         roi_color = frame[y:y + h, x:x + w] 
         smiles = smile_cascade.detectMultiScale(roi_gray, 1.8, 20) 
         if (len(smiles) > 0 or tess.changed(760, 1320, 110, 80)):
-            print("FUCK U")
-            # ser.write(b'H')
+            #print("FUCK U")
+            ser.write(b'H')
+            if(len(smiles) <= 0):
+                time.sleep(1)
         else:
-            print("unfuck")
-            # ser.write(b'L')
+            #print("unfuck")
+            ser.write(b'L')
   
         for (sx, sy, sw, sh) in smiles: 
             cv2.rectangle(roi_color, (sx, sy), ((sx + sw), (sy + sh)), (0, 0, 255), 2) 
@@ -50,7 +52,7 @@ while True:
   
     # The control breaks once q key is pressed                         
     if cv2.waitKey(1) & 0xff == ord('q'):
-        # ser.write(b'L')              
+        ser.write(b'L')              
         break
   
 # Release the capture once all the processing is done. 
